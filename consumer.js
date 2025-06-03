@@ -1,8 +1,10 @@
 import amqp from 'amqplib';
+import dotenv from 'dotenv';
 
-const AMQP_URL = 'amqp://user:password@localhost:5672';
+dotenv.config();
 
-const RESULTS = 'results';
+const AMQP_URL = process.env.AMQP_URL;
+const RESULTS = process.env.RESULTS || 'results';
 
 const conn = await amqp.connect(AMQP_URL);
 const ch = await conn.createChannel();
