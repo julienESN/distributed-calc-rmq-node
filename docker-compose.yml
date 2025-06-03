@@ -1,22 +1,31 @@
-version: '3.9'
 services:
   rabbitmq:
-    image: rabbitmq:3.13-management
-    container_name: rmq
+    image: rabbitmq:3-management
+    container_name: rabbitmq
     ports:
-      - '5672:5672'
-      - '15672:15672'
+      - "5672:5672"
+      - "15672:15672"
     environment:
-      RABBITMQ_DEFAULT_USER: user
-      RABBITMQ_DEFAULT_PASS: password
-    volumes:
-      - rabbitmq-data:/var/lib/rabbitmq # persiste les messages & conf
-    restart: unless-stopped # redémarre au boot
-    healthcheck: # optionnel : statut santé
-      test: ['CMD', 'rabbitmq-diagnostics', 'ping']
-      interval: 30s
-      timeout: 10s
-      retries: 5
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
 
-volumes:
-  rabbitmq-data:
+  producer:
+    build: ./client
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+
+  worker:
+    build: ./worker
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+
+  consumer:
+    build: ./consumer
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
