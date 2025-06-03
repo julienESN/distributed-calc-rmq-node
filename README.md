@@ -21,7 +21,7 @@ git clone https://github.com/julienESN/distributed-calc-rmq-node
 cd distributed-calc-rmq-node
 
 # 1. Lancer RabbitMQ avec interface web (localhost:15672)
-docker compose up -d
+docker-compose up -d
 
 # 2. Installer les dépendances Node.js
 npm install
