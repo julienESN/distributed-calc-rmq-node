@@ -1,9 +1,11 @@
 import amqp from 'amqplib';
 import { randomInt } from 'crypto';
+import dotenv from 'dotenv';
 
-const AMQP_URL = 'amqp://user:password@localhost:5672';
+dotenv.config();
 
-const QUEUE = 'tasks';
+const AMQP_URL = process.env.AMQP_URL;
+const QUEUE = process.env.QUEUE || 'tasks';
 
 const conn = await amqp.connect(AMQP_URL);
 const ch = await conn.createChannel();
