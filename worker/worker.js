@@ -1,17 +1,21 @@
-import { randomInt } from 'crypto';
-import { connect, log, sleep } from './utils.js';
+/**
+ * Worker de calcul : consomme des tâches depuis RabbitMQ, effectue l'opération et publie le résultat.
+ */
+
+import { randomInt } from "crypto";
+import { connect, log, sleep } from "./utils.js";
 
 // Récupérer l'opération depuis les arguments de la ligne de commande
-const OPERATION = process.argv[2] || 'add';
+const OPERATION = process.argv[2] || "add";
 const TASKS_QUEUE = `tasks_${OPERATION}`;
-const OUTPUT = process.env.RESULTS || 'results';
+const OUTPUT = process.env.RESULTS || "results";
 
-// Fonctions de calcul
+// Fonctions de calcul disponibles
 const operations = {
   add: (n1, n2) => n1 + n2,
   sub: (n1, n2) => n1 - n2,
   mul: (n1, n2) => n1 * n2,
-  div: (n1, n2) => n2 !== 0 ? n1 / n2 : 'Division par zéro'
+  div: (n1, n2) => (n2 !== 0 ? n1 / n2 : "Division par zéro"),
 };
 
 (async () => {
@@ -23,18 +27,21 @@ const operations = {
   ]);
   await ch.prefetch(1);
 
-  process.on('SIGINT', () => {
-    log(`worker-${OPERATION}`, 'bye');
+  process.on("SIGINT", () => {
+    log(`worker-${OPERATION}`, "bye");
     process.exit();
   });
 
-  log(`worker-${OPERATION}`, `Attente de tâches ${OPERATION} (Ctrl-C pour quitter)`);
+  log(
+    `worker-${OPERATION}`,
+    `Attente de tâches ${OPERATION} (Ctrl-C pour quitter)`
+  );
   ch.consume(TASKS_QUEUE, async (msg) => {
     if (!msg) return;
 
     const { n1, n2, op } = JSON.parse(msg.content);
-    
-    // Vérifier que l'opération correspond à ce worker
+
+    // Vérifie que l'opération correspond à ce worker
     if (op !== OPERATION) {
       log(`worker-${OPERATION}`, `⚠️  opération incorrecte: ${op}, ignorée`);
       ch.ack(msg);
@@ -42,14 +49,15 @@ const operations = {
     }
 
     log(`worker-${OPERATION}`, `Message reçu : ${msg.content.toString()}`);
-    
+
+    // Simule un temps de traitement aléatoire
     const delay = randomInt(5, 16) * 1000;
     log(`worker-${OPERATION}`, `Pause de ${delay / 1000}s`);
     await sleep(delay);
 
     const calculation = operations[op];
     const resultValue = calculation(n1, n2);
-    
+
     const result = { n1, n2, op, result: resultValue };
     ch.sendToQueue(OUTPUT, Buffer.from(JSON.stringify(result)), {
       persistent: true,
