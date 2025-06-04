@@ -16,12 +16,37 @@ services:
     depends_on:
       - rabbitmq
 
-  worker:
+  worker-add:
     build: ./worker
     env_file:
       - .env
     depends_on:
       - rabbitmq
+    command: ["node", "worker.js", "add"]
+
+  worker-sub:
+    build: ./worker
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+    command: ["node", "worker.js", "sub"]
+
+  worker-mul:
+    build: ./worker
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+    command: ["node", "worker.js", "mul"]
+
+  worker-div:
+    build: ./worker
+    env_file:
+      - .env
+    depends_on:
+      - rabbitmq
+    command: ["node", "worker.js", "div"]
 
   consumer:
     build: ./consumer
