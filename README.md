@@ -1,5 +1,12 @@
 # 🐇 Distributed Calc RMQ
 
+**Contributeurs :**
+
+- Julien Esnault
+- Sofiane Fares
+- Galaad Filâtre
+- Clément Suire
+
 **Calcul distribué asynchrone avec Node.js & RabbitMQ**  
 Un projet pédagogique, modulaire et scalable pour découvrir la programmation distribuée, la file de messages RabbitMQ et la montée en charge des microservices.
 
