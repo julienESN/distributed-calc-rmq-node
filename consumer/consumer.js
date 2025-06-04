@@ -1,4 +1,4 @@
-import { connect, log } from '../utils.js';
+import { connect, log } from './utils.js';
 
 const OUTPUT = process.env.RESULTS || 'results';
 
@@ -12,10 +12,10 @@ const OUTPUT = process.env.RESULTS || 'results';
     process.exit();
   });
 
-  log('consumer', 'écoute des résultats (Ctrl-C pour quitter)');
+  log('consumer', 'Écoute des résultats (Ctrl-C pour quitter)');
   ch.consume(OUTPUT, (msg) => {
     if (!msg) return;
-    log('consumer', `⇦ ${msg.content.toString()}`);
+    log('consumer', `Résultat reçu : ${msg.content.toString()}`);
     ch.ack(msg);
   });
 })();
